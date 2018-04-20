@@ -121,6 +121,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="PMD.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Typedef.h" />
     <ClInclude Include="WICTextureLoader12.h" />
     <ClInclude Include="Window.h" />
@@ -131,6 +132,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PMD.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="WICTextureLoader12.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "Device.h"
 #include "BMP.h"
 #include "PMD.h"
+#include "Texture.h"
 #include "d3dx12.h"
 #include <d3dcompiler.h>
 #include <tchar.h>
@@ -208,6 +209,11 @@ Device::~Device()
 	if (BMP::GetInstance() != nullptr)
 	{
 		BMP::Destroy();
+	}
+
+	if (Texture::GetInstance() != nullptr)
+	{
+		Texture::Destroy();
 	}
 }
 
@@ -537,11 +543,11 @@ HRESULT Device::CreateFence(void)
 HRESULT Device::SerializeRootSignature(void)
 {
 	// ディスクリプタレンジの設定.
-	D3D12_DESCRIPTOR_RANGE range[4];
+	D3D12_DESCRIPTOR_RANGE range[2];
 	SecureZeroMemory(&range, sizeof(range));
 
 	//ルートパラメータの設定.
-	D3D12_ROOT_PARAMETER param[4];
+	D3D12_ROOT_PARAMETER param[2];
 	SecureZeroMemory(&param, sizeof(param));
 
 	//定数バッファ用
@@ -569,7 +575,7 @@ HRESULT Device::SerializeRootSignature(void)
 	param[1].DescriptorTable.pDescriptorRanges		= &range[1];
 
 	//マテリアル用
-	range[2].RangeType								= D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+	/*range[2].RangeType								= D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 	range[2].NumDescriptors							= 1;
 	range[2].BaseShaderRegister						= 1;
 	range[2].RegisterSpace							= 0;
@@ -590,7 +596,7 @@ HRESULT Device::SerializeRootSignature(void)
 	param[3].ParameterType							= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	param[3].ShaderVisibility						= D3D12_SHADER_VISIBILITY_ALL;
 	param[3].DescriptorTable.NumDescriptorRanges	= 1;
-	param[3].DescriptorTable.pDescriptorRanges		= &range[3];
+	param[3].DescriptorTable.pDescriptorRanges		= &range[3];*/
 
 	//静的サンプラーの設定
 	D3D12_STATIC_SAMPLER_DESC sampler;
@@ -785,13 +791,20 @@ HRESULT Device::CreateVertexBufferTexture(void)
 	//三角形の頂点座標(上から時計回り)
 	Vertex tran[] =
 	{
-		{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {0, 0} },	//左上
-		{ {  1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {1, 0} },	//右上
-		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1, 1} },	//右下
+		{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {0.0f, 0.0f} },	//左上
+		{ {  1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {1.0f / 5.0f, 0.0f} },	//右上
+		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1.0f / 5.0f, 1.0f / 6.0f} },	//右下
 
-		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1, 1} },	//右下
-		{ { -1.0f / 2.0f, -1.0f / 2.0f, 0.0f }, {0, 1} },	//左下
-		{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {0, 0} }	//左上
+		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1.0f / 5.0f, 1.0f / 6.0f} },	//右下
+		{ { -1.0f / 2.0f, -1.0f / 2.0f, 0.0f }, {0.0f, 1.0f / 6.0f} },	//左下
+		{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {0.0f, 0.0f} }	//左上
+	/*{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f },{ 0.0f, 0.0f } },	//左上
+	{ { 1.0f / 2.0f,  1.0f / 2.0f,	0.0f },{ 1.0f, 0.0f } },	//右上
+	{ { 1.0f / 2.0f, -1.0f / 2.0f,	0.0f },{ 1.0f, 1.0f } },	//右下
+
+	{ { 1.0f / 2.0f, -1.0f / 2.0f,	0.0f },{ 1.0f, 1.0f } },	//右下
+	{ { -1.0f / 2.0f, -1.0f / 2.0f, 0.0f },{ 0.0f, 1.0f } },	//左下
+	{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f },{ 0.0f, 0.0f } }	//左上*/
 	};
 
 	//頂点用リソース生成
@@ -1048,18 +1061,21 @@ void Device::Init(void)
 // テクスチャ用の初期処理
 void Device::TextInit(void)
 {
-	/*if (BMP::GetInstance() == nullptr)
+	if (BMP::GetInstance() == nullptr)
 	{
 		//BMPクラスのインスタンス
 		BMP::Create();
 	}
 
 	//BMP読み込み
-	result = BMP::GetInstance()->LoadBMP(0, "sample/texturesample24bit.bmp", command.dev);
+	result = BMP::GetInstance()->LoadBMP(0, "サンプル/グラブル.bmp", command.dev);
 	if (FAILED(result))
 	{
 		return;
-	}*/
+	}
+
+	Texture::Create();
+	result = Texture::GetInstance()->LoadBMP(0, "サンプル/グラブル.bmp", swap.bufferCnt, command.dev);
 
 	//シェーダー
 	result = ShaderCompileTexture();
@@ -1296,11 +1312,13 @@ void Device::UpData(void)
 	ClearDepthStencil();
 	
 	//頂点バッファビューのセット
-	command.list->IASetVertexBuffers(0, 1, &vertexView);
-
+	//command.list->IASetVertexBuffers(0, 1, &vertexView);
+	
 	// 描画
-	command.list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	command.list->DrawInstanced(6, 1, 0, 0);
+	/*command.list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	command.list->DrawInstanced(6, 1, 0, 0);*/
+	//BMP::GetInstance()->Draw(0, command.list);
+	Texture::GetInstance()->Draw(0, { 160, 140 }, { 250, 250 }, { (float)WINDOW_X, (float)WINDOW_Y }, command.list);
 	
 	// RenderTarget ---> Present
 	Barrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);

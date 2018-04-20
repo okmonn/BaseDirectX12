@@ -120,9 +120,9 @@ HRESULT BMP::LoadBMP(USHORT index, std::string fileName, ID3D12Device* dev)
 
 	//BMPヘッダー読み込み
 	fread(&header, sizeof(header), 1, file);
-
+	
 	//画像の幅と高さの保存
-	data[index].size = { header.biWidth ,header.biHeight };
+	data[index].size = { header.biWidth, header.biHeight };
 
 	//データサイズ分のメモリ確保(ビットの深さが32bitの場合)
 	//bmp.resize(header.biSizeImage);
