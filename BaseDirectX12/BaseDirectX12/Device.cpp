@@ -785,8 +785,8 @@ HRESULT Device::CreateVertexBufferTexture(void)
 	//三角形の頂点座標(上から時計回り)
 	Vertex tran[] =
 	{
-		{ { -1.0f / 2.0f, 1.0f / 2.0f,	0.0f }, {0, 0} },	//左上
-		{ {  1.0f / 2.0f, 1.0f / 2.0f,	0.0f }, {1, 0} },	//右上
+		{ { -1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {0, 0} },	//左上
+		{ {  1.0f / 2.0f,  1.0f / 2.0f,	0.0f }, {1, 0} },	//右上
 		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1, 1} },	//右下
 
 		{ {  1.0f / 2.0f, -1.0f / 2.0f,	0.0f }, {1, 1} },	//右下
@@ -1299,9 +1299,6 @@ void Device::UpData(void)
 	command.list->IASetVertexBuffers(0, 1, &vertexView);
 
 	// 描画
-	//BMP::GetInstance()->Draw(0, command.list);
-	//PMD::GetInstance()->Draw(command.list, indexView);
-
 	command.list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	command.list->DrawInstanced(6, 1, 0, 0);
 	
